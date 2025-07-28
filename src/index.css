@@ -2,41 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Crypto Bubbles Design System - Modern Financial Theme */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Dark-first crypto theme */
+    --background: 225 25% 8%;
+    --foreground: 210 40% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 225 20% 12%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 225 20% 10%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 222.2 47.4% 11.2%;
+    /* Crypto-inspired primary colors */
+    --primary: 142 76% 36%;
     --primary-foreground: 210 40% 98%;
+    --primary-glow: 142 76% 50%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 225 15% 20%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 225 15% 15%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 262 83% 58%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 84.2% 60.2%;
+    /* Crypto-specific colors */
+    --crypto-gain: 142 76% 36%;
+    --crypto-loss: 0 84% 60%;
+    --crypto-neutral: 45 93% 47%;
+    
+    --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 225 15% 20%;
+    --input: 225 15% 18%;
+    --ring: 142 76% 36%;
 
-    --radius: 0.5rem;
+    /* Enhanced gradients for crypto aesthetics */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-cyber: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--primary)));
+    --gradient-card: linear-gradient(135deg, hsl(var(--card)), hsl(225 15% 15%));
+    
+    /* Shadows with crypto glow effects */
+    --shadow-glow: 0 0 20px hsl(var(--primary) / 0.3);
+    --shadow-card: 0 4px 20px hsl(225 25% 5% / 0.4);
+    --shadow-bubble: 0 2px 10px hsl(225 25% 5% / 0.6);
+
+    /* Animation curves */
+    --ease-crypto: cubic-bezier(0.23, 1, 0.320, 1);
+    --transition-smooth: all 0.3s var(--ease-crypto);
+
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +120,49 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Crypto-specific utility classes */
+  .crypto-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .crypto-card {
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .crypto-gain {
+    color: hsl(var(--crypto-gain));
+  }
+
+  .crypto-loss {
+    color: hsl(var(--crypto-loss));
+  }
+
+  .crypto-neutral {
+    color: hsl(var(--crypto-neutral));
+  }
+
+  /* Bubble animations */
+  .bubble {
+    transition: var(--transition-smooth);
+    cursor: pointer;
+  }
+
+  .bubble:hover {
+    filter: brightness(1.1);
+    transform: scale(1.05);
+  }
+
+  /* Smooth scrolling and selections */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.3);
   }
 }
