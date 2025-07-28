@@ -119,7 +119,7 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('dy', '0.35em')
       .attr('font-family', 'monospace')
       .attr('font-weight', 'bold')
-      .attr('font-size', d => Math.min(d.radius / 3, 14))
+      .attr('font-size', d => Math.min(d.radius / 2, 18))
       .attr('fill', 'white')
       .attr('fill-opacity', 0.9)
       .style('pointer-events', 'none')
@@ -150,6 +150,21 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
         hideTooltip();
       })
       .on('mousemove', function(event, d) {
+        const rect = svgRef.current?.getBoundingClientRect();
+        if (rect) {
+          const mouseX = event.clientX - rect.left;
+          const mouseY = event.clientY - rect.top;
+          
+          // Gentle attraction to mouse position
+          const dx = mouseX - d.x!;
+          const dy = mouseY - d.y!;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance > 20) {
+            d.fx = d.x! + dx * 0.05;
+            d.fy = d.y! + dy * 0.05;
+          }
+        }
         showTooltip(event, d);
       })
       .on('click', function(event, d) {
