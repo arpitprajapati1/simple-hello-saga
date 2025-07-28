@@ -102,14 +102,14 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('class', 'bubble-group')
       .style('cursor', 'pointer');
 
-    // Add simplified bubble circles
+    // Add transparent bubble circles with colored borders
     bubbles.append('circle')
       .attr('class', 'bubble')
       .attr('r', d => d.radius)
-      .attr('fill', d => d.color)
-      .attr('stroke', d => d3.color(d.color)?.darker(0.2)?.toString() || d.color)
-      .attr('stroke-width', 1.5)
-      .attr('opacity', 0.85);
+      .attr('fill', 'none')
+      .attr('stroke', d => d.color)
+      .attr('stroke-width', 2)
+      .attr('opacity', 0.8);
 
     // Add text labels
     bubbles
@@ -134,7 +134,7 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
           .duration(150)
           .attr('opacity', 1)
           .attr('r', d.radius * 1.1)
-          .attr('stroke-width', 2.5);
+          .attr('stroke-width', 3);
         
         showTooltip(event, d);
       })
@@ -143,9 +143,9 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
         bubble
           .transition()
           .duration(150)
-          .attr('opacity', 0.85)
+          .attr('opacity', 0.8)
           .attr('r', d.radius)
-          .attr('stroke-width', 1.5);
+          .attr('stroke-width', 2);
         
         hideTooltip();
       })
