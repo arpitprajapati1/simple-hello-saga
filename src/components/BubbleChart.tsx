@@ -83,13 +83,14 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('height', height)
       .attr('fill', 'url(#background-gradient)');
 
-    // Create force simulation
+    // Create lightweight force simulation
     const simulation = d3.forceSimulation(data)
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide<BubbleData>().radius(d => d.radius + 2))
-      .force('charge', d3.forceManyBody().strength(-50))
-      .force('x', d3.forceX(width / 2).strength(0.05))
-      .force('y', d3.forceY(height / 2).strength(0.05));
+      .force('collision', d3.forceCollide<BubbleData>().radius(d => d.radius + 1))
+      .force('charge', d3.forceManyBody().strength(-20))
+      .force('x', d3.forceX(width / 2).strength(0.02))
+      .force('y', d3.forceY(height / 2).strength(0.02))
+      .alphaDecay(0.05);
 
     simulationRef.current = simulation;
 
@@ -101,49 +102,14 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('class', 'bubble-group')
       .style('cursor', 'pointer');
 
-    // Add bubble circles with gradients
-    bubbles.each(function(d, i) {
-      const bubbleGroup = d3.select(this);
-      
-      // Create unique gradient for each bubble
-      const bubbleGradient = defs.append('radialGradient')
-        .attr('id', `bubble-gradient-${i}`)
-        .attr('cx', '30%')
-        .attr('cy', '30%')
-        .attr('r', '70%');
-      
-      bubbleGradient.append('stop')
-        .attr('offset', '0%')
-        .attr('stop-color', d3.color(d.color)?.brighter(0.3)?.toString() || d.color)
-        .attr('stop-opacity', 0.9);
-      
-      bubbleGradient.append('stop')
-        .attr('offset', '70%')
-        .attr('stop-color', d.color)
-        .attr('stop-opacity', 0.8);
-      
-      bubbleGradient.append('stop')
-        .attr('offset', '100%')
-        .attr('stop-color', d3.color(d.color)?.darker(0.3)?.toString() || d.color)
-        .attr('stop-opacity', 0.9);
-
-      // Add outer glow circle
-      bubbleGroup.append('circle')
-        .attr('class', 'bubble-glow')
-        .attr('r', d.radius + 4)
-        .attr('fill', d.color)
-        .attr('fill-opacity', 0.2)
-        .attr('filter', 'blur(4px)');
-
-      // Add main bubble circle
-      bubbleGroup.append('circle')
-        .attr('class', 'bubble')
-        .attr('r', d.radius)
-        .attr('fill', `url(#bubble-gradient-${i})`)
-        .attr('stroke', d.color)
-        .attr('stroke-width', 2)
-        .attr('stroke-opacity', 0.6);
-    });
+    // Add simplified bubble circles
+    bubbles.append('circle')
+      .attr('class', 'bubble')
+      .attr('r', d => d.radius)
+      .attr('fill', d => d.color)
+      .attr('stroke', d => d3.color(d.color)?.darker(0.2)?.toString() || d.color)
+      .attr('stroke-width', 1.5)
+      .attr('opacity', 0.85);
 
     // Add text labels
     bubbles
@@ -159,21 +125,27 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .style('pointer-events', 'none')
       .text(d => d.symbol);
 
-    // Add interactivity
+    // Add interactivity with smooth hover effects
     bubbles
       .on('mouseenter', function(event, d) {
-        d3.select(this)
+        const bubble = d3.select(this).select('.bubble');
+        bubble
           .transition()
-          .duration(200)
-          .attr('transform', 'scale(1.1)');
+          .duration(150)
+          .attr('opacity', 1)
+          .attr('r', d.radius * 1.1)
+          .attr('stroke-width', 2.5);
         
         showTooltip(event, d);
       })
-      .on('mouseleave', function() {
-        d3.select(this)
+      .on('mouseleave', function(event, d) {
+        const bubble = d3.select(this).select('.bubble');
+        bubble
           .transition()
-          .duration(200)
-          .attr('transform', 'scale(1)');
+          .duration(150)
+          .attr('opacity', 0.85)
+          .attr('r', d.radius)
+          .attr('stroke-width', 1.5);
         
         hideTooltip();
       })

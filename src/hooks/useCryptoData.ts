@@ -10,9 +10,9 @@ interface UseCryptoDataOptions {
 
 export const useCryptoData = (options: UseCryptoDataOptions = {}) => {
   const {
-    limit = 100,
+    limit = 50,
     autoRefresh = true,
-    refreshInterval = 30000, // 30 seconds
+    refreshInterval = 60000, // 60 seconds
   } = options;
 
   const [coins, setCoins] = useState<CryptoCoin[]>([]);
