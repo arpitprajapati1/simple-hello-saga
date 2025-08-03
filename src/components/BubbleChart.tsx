@@ -13,8 +13,7 @@ interface BubbleChartProps {
 
 export const BubbleChart: React.FC<BubbleChartProps> = ({
   data,
-  width = 1800,
-  height = 1200,
+
   onBubbleClick,
   className = '',
 }) => {
