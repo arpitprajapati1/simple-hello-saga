@@ -84,6 +84,7 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('stop-color', 'hsl(0, 0%, 0%)')
       .attr('stop-opacity', 1);
 
+
     // Add space background
     container.append('rect')
       .attr('width', width)
@@ -135,6 +136,30 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       radius: Math.min(Math.max(d.radius * 0.7, 25), 60) // Min 25px, max 60px
     }));
 
+    // Create bubble gradients for better text visibility
+    normalizedData.forEach((d, i) => {
+      const bubbleGradient = defs.append('radialGradient')
+        .attr('id', `bubble-gradient-${i}`)
+        .attr('cx', '50%')
+        .attr('cy', '50%')
+        .attr('r', '50%');
+      
+      bubbleGradient.append('stop')
+        .attr('offset', '0%')
+        .attr('stop-color', d.color)
+        .attr('stop-opacity', 0.3);
+      
+      bubbleGradient.append('stop')
+        .attr('offset', '70%')
+        .attr('stop-color', d.color)
+        .attr('stop-opacity', 0.1);
+      
+      bubbleGradient.append('stop')
+        .attr('offset', '100%')
+        .attr('stop-color', d.color)
+        .attr('stop-opacity', 0.05);
+    });
+
     // Create force simulation with octagonal constraint and continuous motion
     const simulation = d3.forceSimulation(normalizedData)
       .force('center', d3.forceCenter(centerX, centerY))
@@ -172,11 +197,11 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       }
     }, 3000);
 
-    // Add transparent bubble circles with colored borders
+    // Add gradient-filled bubble circles with colored borders
     bubbles.append('circle')
       .attr('class', 'bubble')
       .attr('r', d => d.radius)
-      .attr('fill', 'none')
+      .attr('fill', (d, i) => `url(#bubble-gradient-${i})`)
       .attr('stroke', d => d.color)
       .attr('stroke-width', 2)
       .attr('opacity', 0.8);
