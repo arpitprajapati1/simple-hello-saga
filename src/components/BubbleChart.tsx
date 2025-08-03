@@ -69,12 +69,17 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
     
     gradient.append('stop')
       .attr('offset', '0%')
-      .attr('stop-color', 'hsl(0, 100%, 70%)')
+      .attr('stop-color', 'hsl(0, 0%, 100%)')
+      .attr('stop-opacity', 1);
+    
+    gradient.append('stop')
+      .attr('offset', '50%')
+      .attr('stop-color', 'hsl(240, 100%, 50%)')
       .attr('stop-opacity', 1);
     
     gradient.append('stop')
       .attr('offset', '100%')
-      .attr('stop-color', 'hsl(10, 100%, 50%)')
+      .attr('stop-color', 'hsl(0, 0%, 0%)')
       .attr('stop-opacity', 1);
 
     // Add space background
