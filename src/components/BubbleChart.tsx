@@ -59,37 +59,72 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('viewBox', `0 0 ${width} ${height}`)
       .append('g');
 
-    // Create background gradient
+    // Create space background gradient
     const defs = svg.append('defs');
     const gradient = defs.append('radialGradient')
-      .attr('id', 'background-gradient')
+      .attr('id', 'space-gradient')
       .attr('cx', '50%')
       .attr('cy', '50%')
-      .attr('r', '70%');
+      .attr('r', '80%');
     
     gradient.append('stop')
       .attr('offset', '0%')
-      .attr('stop-color', 'hsl(225, 20%, 15%)')
-      .attr('stop-opacity', 0.1);
+      .attr('stop-color', 'hsl(240, 100%, 5%)')
+      .attr('stop-opacity', 1);
     
     gradient.append('stop')
       .attr('offset', '100%')
-      .attr('stop-color', 'hsl(225, 25%, 8%)')
-      .attr('stop-opacity', 0.8);
+      .attr('stop-color', 'hsl(220, 100%, 2%)')
+      .attr('stop-opacity', 1);
 
-    // Add background
+    // Add space background
     container.append('rect')
       .attr('width', width)
       .attr('height', height)
-      .attr('fill', 'url(#background-gradient)');
+      .attr('fill', 'url(#space-gradient)');
 
-    // Create lightweight force simulation
+    // Add stars
+    const starData = Array.from({ length: 200 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: Math.random() * 2 + 0.5,
+      opacity: Math.random() * 0.8 + 0.2
+    }));
+
+    container.selectAll('.star')
+      .data(starData)
+      .join('circle')
+      .attr('class', 'star')
+      .attr('cx', d => d.x)
+      .attr('cy', d => d.y)
+      .attr('r', d => d.size)
+      .attr('fill', 'white')
+      .attr('opacity', d => d.opacity);
+
+    // Define bubble motion area (80% of canvas)
+    const margin = Math.min(width, height) * 0.1;
+    const bubbleArea = {
+      left: margin,
+      right: width - margin,
+      top: margin,
+      bottom: height - margin
+    };
+
+    // Create force simulation with constrained movement
     const simulation = d3.forceSimulation(data)
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide<BubbleData>().radius(d => d.radius + 1))
-      .force('charge', d3.forceManyBody().strength(-20))
-      .force('x', d3.forceX(width / 2).strength(0.02))
-      .force('y', d3.forceY(height / 2).strength(0.02))
+      .force('collision', d3.forceCollide<BubbleData>().radius(d => d.radius + 2))
+      .force('charge', d3.forceManyBody().strength(-30))
+      .force('x', d3.forceX(width / 2).strength(0.03))
+      .force('y', d3.forceY(height / 2).strength(0.03))
+      .force('boundary', () => {
+        data.forEach(d => {
+          if (d.x! < bubbleArea.left + d.radius) d.x = bubbleArea.left + d.radius;
+          if (d.x! > bubbleArea.right - d.radius) d.x = bubbleArea.right - d.radius;
+          if (d.y! < bubbleArea.top + d.radius) d.y = bubbleArea.top + d.radius;
+          if (d.y! > bubbleArea.bottom - d.radius) d.y = bubbleArea.bottom - d.radius;
+        });
+      })
       .alphaDecay(0.05);
 
     simulationRef.current = simulation;
@@ -119,7 +154,7 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('dy', '0.35em')
       .attr('font-family', 'monospace')
       .attr('font-weight', 'bold')
-      .attr('font-size', d => Math.min(d.radius / 2, 18))
+      .attr('font-size', 14)
       .attr('fill', 'white')
       .attr('fill-opacity', 0.9)
       .style('pointer-events', 'none')
