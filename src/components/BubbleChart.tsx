@@ -104,7 +104,7 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
     // Define octagonal bubble motion area
     const centerX = width / 2;
     const centerY = height / 2;
-    const octagonRadius = Math.min(width, height) * 0.35;
+    const octagonRadius = Math.min(width, height) * 0.48;
     
     // Create octagon vertices
     const octagonVertices = [];
