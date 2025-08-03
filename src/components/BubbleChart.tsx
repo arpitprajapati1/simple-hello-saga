@@ -61,20 +61,32 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
 
     // Create space background gradient
     const defs = svg.append('defs');
-    const gradient = defs.append('radialGradient')
+    const gradient = defs.append('linearGradient')
       .attr('id', 'space-gradient')
-      .attr('cx', '50%')
-      .attr('cy', '50%')
-      .attr('r', '80%');
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '100%')
+      .attr('y2', '100%')
+      .attr('gradientTransform', 'rotate(45)');
     
     gradient.append('stop')
       .attr('offset', '0%')
-      .attr('stop-color', 'hsl(0, 0%, 100%)')
+      .attr('stop-color', 'hsl(0, 0%, 0%)')
+      .attr('stop-opacity', 1);
+    
+    gradient.append('stop')
+      .attr('offset', '25%')
+      .attr('stop-color', 'hsl(240, 100%, 20%)')
       .attr('stop-opacity', 1);
     
     gradient.append('stop')
       .attr('offset', '50%')
       .attr('stop-color', 'hsl(240, 100%, 50%)')
+      .attr('stop-opacity', 1);
+    
+    gradient.append('stop')
+      .attr('offset', '75%')
+      .attr('stop-color', 'hsl(0, 0%, 100%)')
       .attr('stop-opacity', 1);
     
     gradient.append('stop')
