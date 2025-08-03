@@ -101,13 +101,25 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('fill', 'white')
       .attr('opacity', d => d.opacity);
 
-    // Define bubble motion area (70% of canvas)
-    const margin = Math.min(width, height) * 0.15;
-    const bubbleArea = {
-      left: margin,
-      right: width - margin,
-      top: margin,
-      bottom: height - margin
+    // Define octagonal bubble motion area
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const octagonRadius = Math.min(width, height) * 0.35;
+    
+    // Create octagon vertices
+    const octagonVertices = [];
+    for (let i = 0; i < 8; i++) {
+      const angle = (i * Math.PI) / 4;
+      octagonVertices.push({
+        x: centerX + octagonRadius * Math.cos(angle),
+        y: centerY + octagonRadius * Math.sin(angle)
+      });
+    }
+
+    // Function to check if point is inside octagon
+    const isInsideOctagon = (x: number, y: number, radius: number) => {
+      const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+      return distance + radius < octagonRadius;
     };
 
     // Normalize bubble sizes for better readability
@@ -116,19 +128,21 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       radius: Math.min(Math.max(d.radius * 0.7, 25), 60) // Min 25px, max 60px
     }));
 
-    // Create force simulation with constrained movement and continuous motion
+    // Create force simulation with octagonal constraint and continuous motion
     const simulation = d3.forceSimulation(normalizedData)
-      .force('center', d3.forceCenter(width / 2, height / 2))
+      .force('center', d3.forceCenter(centerX, centerY))
       .force('collision', d3.forceCollide<BubbleData>().radius(d => d.radius + 3))
       .force('charge', d3.forceManyBody().strength(-50))
-      .force('x', d3.forceX(width / 2).strength(0.02))
-      .force('y', d3.forceY(height / 2).strength(0.02))
-      .force('boundary', () => {
+      .force('x', d3.forceX(centerX).strength(0.02))
+      .force('y', d3.forceY(centerY).strength(0.02))
+      .force('octagon', () => {
         normalizedData.forEach(d => {
-          if (d.x! < bubbleArea.left + d.radius) d.x = bubbleArea.left + d.radius;
-          if (d.x! > bubbleArea.right - d.radius) d.x = bubbleArea.right - d.radius;
-          if (d.y! < bubbleArea.top + d.radius) d.y = bubbleArea.top + d.radius;
-          if (d.y! > bubbleArea.bottom - d.radius) d.y = bubbleArea.bottom - d.radius;
+          if (!isInsideOctagon(d.x!, d.y!, d.radius)) {
+            const angle = Math.atan2(d.y! - centerY, d.x! - centerX);
+            const distance = octagonRadius - d.radius - 5;
+            d.x = centerX + distance * Math.cos(angle);
+            d.y = centerY + distance * Math.sin(angle);
+          }
         });
       })
       .alphaDecay(0.01) // Slower decay for continuous motion
@@ -160,19 +174,33 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('stroke-width', 2)
       .attr('opacity', 0.8);
 
-    // Add text labels
+    // Add coin symbol text (top line)
     bubbles
       .append('text')
-      .attr('class', 'bubble-text')
+      .attr('class', 'bubble-symbol')
       .attr('text-anchor', 'middle')
-      .attr('dy', '0.35em')
+      .attr('dy', '-0.2em')
       .attr('font-family', 'monospace')
       .attr('font-weight', 'bold')
-      .attr('font-size', 14)
+      .attr('font-size', 12)
       .attr('fill', 'white')
       .attr('fill-opacity', 0.9)
       .style('pointer-events', 'none')
       .text(d => d.symbol);
+
+    // Add percentage change text (bottom line)
+    bubbles
+      .append('text')
+      .attr('class', 'bubble-percentage')
+      .attr('text-anchor', 'middle')
+      .attr('dy', '0.8em')
+      .attr('font-family', 'monospace')
+      .attr('font-weight', 'bold')
+      .attr('font-size', 10)
+      .attr('fill', d => d.priceChange24h >= 0 ? 'hsl(142, 76%, 45%)' : 'hsl(0, 84%, 60%)')
+      .attr('fill-opacity', 0.9)
+      .style('pointer-events', 'none')
+      .text(d => `${d.priceChange24h >= 0 ? '+' : ''}${d.priceChange24h.toFixed(1)}%`);
 
     // Add interactivity with smooth hover effects
     bubbles
