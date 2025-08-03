@@ -101,8 +101,8 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('fill', 'white')
       .attr('opacity', d => d.opacity);
 
-    // Define bubble motion area (80% of canvas)
-    const margin = Math.min(width, height) * 0.1;
+    // Define bubble motion area (70% of canvas)
+    const margin = Math.min(width, height) * 0.15;
     const bubbleArea = {
       left: margin,
       right: width - margin,
@@ -110,32 +110,46 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       bottom: height - margin
     };
 
-    // Create force simulation with constrained movement
-    const simulation = d3.forceSimulation(data)
+    // Normalize bubble sizes for better readability
+    const normalizedData = data.map(d => ({
+      ...d,
+      radius: Math.min(Math.max(d.radius * 0.7, 25), 60) // Min 25px, max 60px
+    }));
+
+    // Create force simulation with constrained movement and continuous motion
+    const simulation = d3.forceSimulation(normalizedData)
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide<BubbleData>().radius(d => d.radius + 2))
-      .force('charge', d3.forceManyBody().strength(-30))
-      .force('x', d3.forceX(width / 2).strength(0.03))
-      .force('y', d3.forceY(height / 2).strength(0.03))
+      .force('collision', d3.forceCollide<BubbleData>().radius(d => d.radius + 3))
+      .force('charge', d3.forceManyBody().strength(-50))
+      .force('x', d3.forceX(width / 2).strength(0.02))
+      .force('y', d3.forceY(height / 2).strength(0.02))
       .force('boundary', () => {
-        data.forEach(d => {
+        normalizedData.forEach(d => {
           if (d.x! < bubbleArea.left + d.radius) d.x = bubbleArea.left + d.radius;
           if (d.x! > bubbleArea.right - d.radius) d.x = bubbleArea.right - d.radius;
           if (d.y! < bubbleArea.top + d.radius) d.y = bubbleArea.top + d.radius;
           if (d.y! > bubbleArea.bottom - d.radius) d.y = bubbleArea.bottom - d.radius;
         });
       })
-      .alphaDecay(0.05);
+      .alphaDecay(0.01) // Slower decay for continuous motion
+      .alphaMin(0.1); // Keep some motion always active
 
     simulationRef.current = simulation;
 
-    // Create bubble groups
+    // Create bubble groups using normalized data
     const bubbles = container
       .selectAll('.bubble-group')
-      .data(data)
+      .data(normalizedData)
       .join('g')
       .attr('class', 'bubble-group')
       .style('cursor', 'pointer');
+
+    // Add continuous gentle motion
+    setInterval(() => {
+      if (simulation.alpha() < 0.2) {
+        simulation.alpha(0.15).restart();
+      }
+    }, 3000);
 
     // Add transparent bubble circles with colored borders
     bubbles.append('circle')
