@@ -122,8 +122,8 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       return distance + radius < octagonRadius;
     };
 
-    // Normalize bubble sizes for better readability
-    const normalizedData = data.map(d => ({
+    // Limit to 30 bubbles and normalize bubble sizes for better readability
+    const normalizedData = data.slice(0, 30).map(d => ({
       ...d,
       radius: Math.min(Math.max(d.radius * 0.7, 25), 60) // Min 25px, max 60px
     }));
