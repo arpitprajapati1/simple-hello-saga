@@ -232,7 +232,7 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('fill', d => d.priceChange24h >= 0 ? 'hsl(142, 76%, 45%)' : 'hsl(0, 84%, 60%)')
       .attr('fill-opacity', 0.9)
       .style('pointer-events', 'none')
-      .text(d => `${d.priceChange24h >= 0 ? '+' : ''}${d.priceChange24h.toFixed(4)}%`);
+      .text(d => `${d.priceChange24h >= 0 ? '+' : ''}${d.priceChange24h.toFixed(2)}%`);
 
     // Add interactivity with smooth hover effects
     bubbles
