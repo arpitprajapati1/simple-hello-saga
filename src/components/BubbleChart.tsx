@@ -59,55 +59,27 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('viewBox', `0 0 ${width} ${height}`)
       .append('g');
 
-    // Create space background gradient
+    // Create defs for patterns and gradients
     const defs = svg.append('defs');
-    const gradient = defs.append('linearGradient')
-      .attr('id', 'space-gradient')
-      .attr('x1', '0%')
-      .attr('y1', '0%')
-      .attr('x2', '100%')
-      .attr('y2', '100%')
-      .attr('gradientTransform', 'rotate(45)');
     
-    gradient.append('stop')
-      .attr('offset', '0%')
-      .attr('stop-color', 'hsl(0, 0%, 0%)')
-      .attr('stop-opacity', 1);
+    // Create pattern for background image
+    const pattern = defs.append('pattern')
+      .attr('id', 'starry-background')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', width)
+      .attr('height', height);
     
-    gradient.append('stop')
-      .attr('offset', '50%')
-      .attr('stop-color', 'hsl(240, 100%, 50%)')
-      .attr('stop-opacity', 1);
-    
-    gradient.append('stop')
-      .attr('offset', '100%')
-      .attr('stop-color', 'hsl(0, 0%, 0%)')
-      .attr('stop-opacity', 1);
+    pattern.append('image')
+      .attr('href', '/lovable-uploads/9bb4d819-9f74-4737-b2bd-94295be9c0cf.png')
+      .attr('width', width)
+      .attr('height', height)
+      .attr('preserveAspectRatio', 'xMidYMid slice');
 
-
-    // Add space background
+    // Add starry night background
     container.append('rect')
       .attr('width', width)
       .attr('height', height)
-      .attr('fill', 'url(#space-gradient)');
-
-    // Add stars
-    const starData = Array.from({ length: 200 }, () => ({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      size: Math.random() * 2 + 0.5,
-      opacity: Math.random() * 0.8 + 0.2
-    }));
-
-    container.selectAll('.star')
-      .data(starData)
-      .join('circle')
-      .attr('class', 'star')
-      .attr('cx', d => d.x)
-      .attr('cy', d => d.y)
-      .attr('r', d => d.size)
-      .attr('fill', 'white')
-      .attr('opacity', d => d.opacity);
+      .attr('fill', 'url(#starry-background)');
 
     // Define octagonal bubble motion area
     const centerX = width / 2;
