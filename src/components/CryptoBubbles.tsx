@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BubbleChart } from './BubbleChart';
 import { FilterPanel } from './FilterPanel';
+import { NewsCarousel } from './NewsCarousel';
 import { useCryptoData } from '../hooks/useCryptoData';
 import { BubbleData, cryptoApi } from '../services/cryptoApi';
 import { useToast } from '../hooks/use-toast';
@@ -101,6 +102,11 @@ export const CryptoBubbles: React.FC = () => {
           </div>
         </div>
       </header>
+
+      {/* News Carousel */}
+      <div className="container mx-auto px-4 pt-4">
+        <NewsCarousel />
+      </div>
 
       {/* Filter Panel */}
       <div className="container mx-auto px-4 py-4">
