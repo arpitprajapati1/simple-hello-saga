@@ -6,14 +6,6 @@ import { BubbleData, cryptoApi } from '../services/cryptoApi';
 import { useToast } from '../hooks/use-toast';
 import { Loader2, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from './ui/alert';
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-  BreadcrumbPage,
-} from './ui/breadcrumb';
 
 export const CryptoBubbles: React.FC = () => {
   const {
@@ -91,29 +83,13 @@ export const CryptoBubbles: React.FC = () => {
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
+            <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Crypto Bubbles
               </h1>
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>Bubble chart</BreadcrumbPage>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbLink href="#" className="text-muted-foreground hover:text-foreground">
-                      Coins heat map
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbLink href="#" className="text-muted-foreground hover:text-foreground">
-                      Crypto news
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
+              <p className="text-sm text-muted-foreground">
+                Real-time cryptocurrency market visualization
+              </p>
             </div>
             
             {loading && (
