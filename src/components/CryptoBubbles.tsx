@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { BubbleChart } from './BubbleChart';
 import { FilterPanel } from './FilterPanel';
-import { NewsCarousel } from './NewsCarousel';
 import { useCryptoData } from '../hooks/useCryptoData';
 import { BubbleData, cryptoApi } from '../services/cryptoApi';
 import { useToast } from '../hooks/use-toast';
@@ -103,35 +102,27 @@ export const CryptoBubbles: React.FC = () => {
         </div>
       </header>
 
-      {/* News Carousel */}
-      <div className="container mx-auto px-4 pt-4">
-        <NewsCarousel />
-      </div>
-
-      {/* Filter Panel */}
-      <div className="container mx-auto px-4 py-4">
-        <FilterPanel
-          timeframe={timeframe}
-          setTimeframe={setTimeframe}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          sizeBy={sizeBy}
-          setSizeBy={setSizeBy}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          showOnlyGainers={showOnlyGainers}
-          showOnlyLosers={showOnlyLosers}
-          toggleGainersFilter={toggleGainersFilter}
-          toggleLosersFilter={toggleLosersFilter}
-          clearFilters={clearFilters}
-          refreshData={refreshData}
-          loading={loading}
-          totalCoins={totalCoins}
-          gainersCount={gainersCount}
-          losersCount={losersCount}
-          lastUpdated={lastUpdated}
-        />
-      </div>
+      <FilterPanel
+        timeframe={timeframe}
+        setTimeframe={setTimeframe}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        sizeBy={sizeBy}
+        setSizeBy={setSizeBy}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        showOnlyGainers={showOnlyGainers}
+        showOnlyLosers={showOnlyLosers}
+        toggleGainersFilter={toggleGainersFilter}
+        toggleLosersFilter={toggleLosersFilter}
+        clearFilters={clearFilters}
+        refreshData={refreshData}
+        loading={loading}
+        totalCoins={totalCoins}
+        gainersCount={gainersCount}
+        losersCount={losersCount}
+        lastUpdated={lastUpdated}
+      />
 
       {/* Bubble Chart */}
       <div className="container mx-auto px-4 pb-8">
