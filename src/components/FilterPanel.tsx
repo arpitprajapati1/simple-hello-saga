@@ -66,20 +66,20 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   ];
 
   return (
-    <div className="bg-card/80 backdrop-blur-sm border border-border rounded-lg p-4 space-y-4">
+    <div className="bg-card/80 backdrop-blur-sm border border-border rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-4">
       {/* Top Row - Search and Refresh */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="flex-1 max-w-sm relative">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
+        <div className="flex-1 w-full sm:max-w-sm relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             placeholder="Search cryptocurrencies..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="pl-10 h-9 text-sm"
           />
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
           <Button
             variant="outline"
             size="sm"
@@ -87,12 +87,12 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
             disabled={loading}
             className="flex items-center gap-2"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
+            <RefreshCw className={`w-3 h-3 sm:w-4 sm:h-4 ${loading ? 'animate-spin' : ''}`} />
+            <span className="text-xs sm:text-sm">Refresh</span>
           </Button>
           
           {lastUpdated && (
-            <span className="text-xs text-muted-foreground hidden sm:block">
+            <span className="text-xs text-muted-foreground hidden md:block">
               Updated {lastUpdated.toLocaleTimeString()}
             </span>
           )}
@@ -100,10 +100,10 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       </div>
 
       {/* Filters Row */}
-      <div className="flex flex-wrap gap-4 items-center">
+      <div className="flex flex-wrap gap-2 sm:gap-4 items-center">
         {/* Timeframe */}
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-muted-foreground">Time:</span>
+          <span className="text-xs sm:text-sm font-medium text-muted-foreground hidden sm:inline">Time:</span>
           <div className="flex rounded-md overflow-hidden border border-border">
             {timeframes.map((tf) => (
               <Button
@@ -111,7 +111,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                 variant={timeframe === tf.value ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setTimeframe(tf.value)}
-                className="rounded-none"
+                className="rounded-none text-xs sm:text-sm h-8 px-2 sm:px-3"
               >
                 {tf.label}
               </Button>
@@ -121,11 +121,11 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
 
         {/* Sort By */}
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-muted-foreground">Sort:</span>
+          <span className="text-xs sm:text-sm font-medium text-muted-foreground hidden sm:inline">Sort:</span>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortBy)}
-            className="bg-background border border-border rounded px-2 py-1 text-sm"
+            className="bg-background border border-border rounded px-2 py-1 text-xs sm:text-sm h-8"
           >
             {sortOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -137,11 +137,11 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
 
         {/* Size By */}
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-muted-foreground">Size:</span>
+          <span className="text-xs sm:text-sm font-medium text-muted-foreground hidden sm:inline">Size:</span>
           <select
             value={sizeBy}
             onChange={(e) => setSizeBy(e.target.value as SizeBy)}
-            className="bg-background border border-border rounded px-2 py-1 text-sm"
+            className="bg-background border border-border rounded px-2 py-1 text-xs sm:text-sm h-8"
           >
             {sizeOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -153,17 +153,17 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       </div>
 
       {/* Filter Buttons and Stats */}
-      <div className="flex flex-wrap gap-2 items-center justify-between">
-        <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col sm:flex-row flex-wrap gap-2 items-start sm:items-center justify-between">
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
           <Button
             variant={showOnlyGainers ? 'default' : 'outline'}
             size="sm"
             onClick={toggleGainersFilter}
-            className="flex items-center gap-2"
+            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm h-8 flex-1 sm:flex-initial"
           >
-            <TrendingUp className="w-4 h-4" />
-            Gainers
-            <Badge variant="secondary" className="ml-1">
+            <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden xs:inline">Gainers</span>
+            <Badge variant="secondary" className="ml-1 text-xs">
               {gainersCount}
             </Badge>
           </Button>
@@ -172,11 +172,11 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
             variant={showOnlyLosers ? 'default' : 'outline'}
             size="sm"
             onClick={toggleLosersFilter}
-            className="flex items-center gap-2"
+            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm h-8 flex-1 sm:flex-initial"
           >
-            <TrendingDown className="w-4 h-4" />
-            Losers
-            <Badge variant="secondary" className="ml-1">
+            <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden xs:inline">Losers</span>
+            <Badge variant="secondary" className="ml-1 text-xs">
               {losersCount}
             </Badge>
           </Button>
@@ -186,15 +186,15 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               variant="ghost"
               size="sm"
               onClick={clearFilters}
-              className="flex items-center gap-2"
+              className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm h-8"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
               Clear
             </Button>
           )}
         </div>
 
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground w-full sm:w-auto justify-between sm:justify-end">
           <span>{totalCoins} coins</span>
           <span className="crypto-gain">{gainersCount} gaining</span>
           <span className="crypto-loss">{losersCount} losing</span>

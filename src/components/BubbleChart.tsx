@@ -13,11 +13,16 @@ interface BubbleChartProps {
 
 export const BubbleChart: React.FC<BubbleChartProps> = ({
   data,
-  width = 1200,
-  height = 800,
+  width,
+  height,
   onBubbleClick,
   className = '',
 }) => {
+  // Responsive dimensions
+  const [dimensions, setDimensions] = React.useState({
+    width: width || Math.min(window.innerWidth - 40, 1200),
+    height: height || Math.min(window.innerHeight * 0.6, 800)
+  });
   const svgRef = useRef<SVGSVGElement>(null);
   const simulationRef = useRef<d3.Simulation<BubbleData, undefined> | null>(null);
   const [tooltip, setTooltip] = useState<{
@@ -54,9 +59,11 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
+    const { width: w, height: h } = dimensions;
+
     // Create container group
     const container = svg
-      .attr('viewBox', `0 0 ${width} ${height}`)
+      .attr('viewBox', `0 0 ${w} ${h}`)
       .append('g');
 
     // Create defs for patterns and gradients
@@ -66,25 +73,31 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
     const pattern = defs.append('pattern')
       .attr('id', 'starry-background')
       .attr('patternUnits', 'userSpaceOnUse')
-      .attr('width', width)
-      .attr('height', height);
+      .attr('width', w)
+      .attr('height', h);
     
     pattern.append('image')
       .attr('href', '/lovable-uploads/9bb4d819-9f74-4737-b2bd-94295be9c0cf.png')
-      .attr('width', width)
-      .attr('height', height)
+      .attr('width', w)
+      .attr('height', h)
       .attr('preserveAspectRatio', 'xMidYMid slice');
 
     // Add starry night background
     container.append('rect')
-      .attr('width', width)
-      .attr('height', height)
+      .attr('width', w)
+      .attr('height', h)
       .attr('fill', 'url(#starry-background)');
 
     // Define octagonal bubble motion area
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const octagonRadius = Math.min(width, height) * 0.48;
+    const centerX = w / 2;
+    const centerY = h / 2;
+    const octagonRadius = Math.min(w, h) * 0.48;
+    
+    // Scale bubbles based on screen size
+    const isMobile = w < 640;
+    const bubbleScale = isMobile ? 0.6 : 0.7;
+    const minRadius = isMobile ? 20 : 25;
+    const maxRadius = isMobile ? 45 : 60;
     
     // Create octagon vertices
     const octagonVertices = [];
@@ -102,10 +115,11 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       return distance + radius < octagonRadius;
     };
 
-    // Limit to 30 bubbles and normalize bubble sizes for better readability
-    const normalizedData = data.slice(0, 30).map(d => ({
+    // Limit bubbles based on screen size and normalize bubble sizes
+    const bubbleLimit = isMobile ? 20 : 30;
+    const normalizedData = data.slice(0, bubbleLimit).map(d => ({
       ...d,
-      radius: Math.min(Math.max(d.radius * 0.7, 25), 60) // Min 25px, max 60px
+      radius: Math.min(Math.max(d.radius * bubbleScale, minRadius), maxRadius)
     }));
 
     // Create bubble gradients for better text visibility
@@ -178,7 +192,8 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('stroke-width', 2)
       .attr('opacity', 0.8);
 
-    // Add coin symbol text (top line)
+    // Add coin symbol text (top line) - responsive font size
+    const fontSize = isMobile ? 10 : 12;
     bubbles
       .append('text')
       .attr('class', 'bubble-symbol')
@@ -186,13 +201,13 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('dy', '-0.2em')
       .attr('font-family', 'monospace')
       .attr('font-weight', 'bold')
-      .attr('font-size', 12)
+      .attr('font-size', fontSize)
       .attr('fill', 'white')
       .attr('fill-opacity', 0.9)
       .style('pointer-events', 'none')
       .text(d => d.symbol);
 
-    // Add percentage change text (bottom line)
+    // Add percentage change text (bottom line) - responsive font size
     bubbles
       .append('text')
       .attr('class', 'bubble-percentage')
@@ -200,7 +215,7 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
       .attr('dy', '0.8em')
       .attr('font-family', 'monospace')
       .attr('font-weight', 'bold')
-      .attr('font-size', 12)
+      .attr('font-size', fontSize)
       .attr('fill', d => d.priceChange24h >= 0 ? 'hsl(142, 76%, 45%)' : 'hsl(0, 84%, 60%)')
       .attr('fill-opacity', 0.9)
       .style('pointer-events', 'none')
@@ -283,34 +298,27 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({
     return () => {
       simulation.stop();
     };
-  }, [data, width, height, onBubbleClick, showTooltip, hideTooltip]);
+  }, [data, dimensions, onBubbleClick, showTooltip, hideTooltip]);
 
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      if (simulationRef.current) {
-        const newWidth = Math.min(window.innerWidth - 40, 1200);
-        const newHeight = Math.min(window.innerHeight - 200, 800);
-        
-        simulationRef.current
-          .force('center', d3.forceCenter(newWidth / 2, newHeight / 2))
-          .force('x', d3.forceX(newWidth / 2).strength(0.05))
-          .force('y', d3.forceY(newHeight / 2).strength(0.05))
-          .alpha(0.3)
-          .restart();
-      }
+      const newWidth = width || Math.min(window.innerWidth - 40, 1200);
+      const newHeight = height || Math.min(window.innerHeight * 0.6, 800);
+      
+      setDimensions({ width: newWidth, height: newHeight });
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [width, height]);
 
   return (
     <div className={`relative ${className}`}>
       <svg
         ref={svgRef}
-        className="w-full h-full"
-        style={{ maxWidth: width, maxHeight: height }}
+        className="w-full h-full min-h-[400px] sm:min-h-[600px]"
+        style={{ maxWidth: dimensions.width, maxHeight: dimensions.height }}
       />
       {tooltip.visible && (
         <CoinTooltip

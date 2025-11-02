@@ -81,13 +81,13 @@ export const CryptoBubbles: React.FC = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Crypto Bubbles
               </h1>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
                 Real-time cryptocurrency market visualization
               </p>
             </div>
@@ -95,7 +95,7 @@ export const CryptoBubbles: React.FC = () => {
             {loading && (
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-sm">Loading...</span>
+                <span className="text-xs sm:text-sm hidden sm:inline">Loading...</span>
               </div>
             )}
           </div>
@@ -125,8 +125,8 @@ export const CryptoBubbles: React.FC = () => {
       />
 
       {/* Bubble Chart */}
-      <div className="container mx-auto px-4 pb-8">
-        <div className="bg-card/30 backdrop-blur-sm border border-border rounded-lg p-4 min-h-[600px] flex items-center justify-center">
+      <div className="container mx-auto px-2 sm:px-4 pb-4 sm:pb-8">
+        <div className="bg-card/30 backdrop-blur-sm border border-border rounded-lg p-2 sm:p-4 min-h-[400px] sm:min-h-[600px] flex items-center justify-center">
           {loading && bubbleData.length === 0 ? (
             <div className="flex flex-col items-center gap-4">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -151,15 +151,15 @@ export const CryptoBubbles: React.FC = () => {
 
       {/* Footer */}
       <footer className="border-t border-border bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-sm text-muted-foreground">
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+            <div className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
               <p>Data provided by CoinGecko API</p>
-              <p>Interactive bubble visualization with real-time updates</p>
+              <p className="hidden sm:block">Interactive bubble visualization with real-time updates</p>
             </div>
             
-            <div className="flex items-center gap-4 text-sm">
-              <span className="text-muted-foreground">Bubble size represents:</span>
+            <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm">
+              <span className="text-muted-foreground">Size:</span>
               <span className="font-medium capitalize">{sizeBy.replace('_', ' ')}</span>
             </div>
           </div>
